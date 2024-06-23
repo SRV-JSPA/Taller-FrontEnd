@@ -1,5 +1,5 @@
+import {ColorModeContext, useMode} from './tema'
 
-import './App.css'
 
 function App() {
   
