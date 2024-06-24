@@ -1,3 +1,5 @@
+import { tokens } from "../tema";
+
 export const mockDataTeam = [
     {
       id: 1,
@@ -431,7 +433,7 @@ export const mockDataTeam = [
   export const mockLineData = [
     {
       id: "japan",
-      color: tokens("dark").greenAccent[500],
+      color: tokens("dark").verdeDecor[500],
       data: [
         {
           x: "plane",
@@ -485,7 +487,7 @@ export const mockDataTeam = [
     },
     {
       id: "france",
-      color: tokens("dark").blueAccent[300],
+      color: tokens("dark").azulDecor[300],
       data: [
         {
           x: "plane",
@@ -539,7 +541,7 @@ export const mockDataTeam = [
     },
     {
       id: "us",
-      color: tokens("dark").redAccent[200],
+      color: tokens("dark").rojoDecor[200],
       data: [
         {
           x: "plane",
