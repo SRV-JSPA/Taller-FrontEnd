@@ -5,6 +5,8 @@ import { Routes, Route} from 'react-router-dom'
 import Dashboard from './pages/dashboard'
 import Sidebar from './pages/global/Sidebar'
 import Carros from './pages/carros'
+import Usuarios from './pages/usuarios'
+
 
 
 
@@ -21,6 +23,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Dashboard/>} />
             <Route path="/carros" element={<Carros/>} />
+            <Route path="/usuarios" element={<Usuarios/>} />
           </Routes>
           </main>
         </div>

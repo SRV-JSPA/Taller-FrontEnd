@@ -45,7 +45,6 @@ const Carros = () => {
 
   const datos = async () => {
     const info = await axios.get("http://localhost:5000/carros");
-    console.log(info.data);
     setCarros(info.data);
   };
 
