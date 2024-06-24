@@ -6,9 +6,8 @@ import Dashboard from './pages/dashboard'
 import Sidebar from './pages/global/Sidebar'
 import Carros from './pages/carros'
 import Usuarios from './pages/usuarios'
-
-
-
+import CrearUsuarios from './pages/crearusuarios'
+import EditarUsuarios from './pages/editarusuarios'
 
 function App() {
   const [tema, colorMode] = useMode();
@@ -24,6 +23,8 @@ function App() {
             <Route path="/" element={<Dashboard/>} />
             <Route path="/carros" element={<Carros/>} />
             <Route path="/usuarios" element={<Usuarios/>} />
+            <Route path="/crearUsuario" element={<CrearUsuarios/>} />
+            <Route path="/editarUsuario/:id" element={<EditarUsuarios/>} />
           </Routes>
           </main>
         </div>

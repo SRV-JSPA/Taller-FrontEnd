@@ -1,17 +1,29 @@
 import { Box, Typography, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../tema";
-import { mockDataTeam } from "../../data/data.js";
 import Header from "../../components/Header";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import { Link } from "react-router-dom";
 
 const Usuarios = () => {
   const tema = useTheme();
   const colores = tokens(tema.palette.mode);
+
+  const handleEditar = ({id}) => {
+    window.location.href = `/editarUsuario/${id}`
+  }
+
+  const handleEliminar = async ({id}) => {
+    setUsuariosConRoles(prevState => prevState.filter(usuario => usuario.id !== id));
+    await axios.delete(`http://localhost:5000/usuarios/${id}`)
+  }
 
   const columnas = [
     {
@@ -29,6 +41,26 @@ const Usuarios = () => {
       headerName: "Contraseña",
       flex: 1,
       cellClassName: "name-column--cell",
+    },
+    {
+      field: "acciones",
+      headerName: "Acciones",
+      flex: 1,
+      cellClassName: "name-column--cell",
+      renderCell: (params) => {
+        return (
+          <Box display="flex" justifyContent="center">
+            <EditOutlinedIcon
+              sx={{ cursor: "pointer", mr: 1, marginTop: "15px" }}
+              onClick={() => handleEditar(params.row)}
+            />
+            <DeleteOutlineOutlinedIcon
+              sx={{ cursor: "pointer", marginRight: "80px", marginTop: "15px" }}
+              onClick={() => handleEliminar(params.row)}
+            />
+          </Box>
+        );
+      },
     },
     {
       field: "rol",
@@ -63,6 +95,7 @@ const Usuarios = () => {
         );
       },
     },
+    
   ];
 
   const [usuarios, setUsuarios] = useState([]);
