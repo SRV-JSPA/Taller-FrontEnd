@@ -1,49 +1,65 @@
-import { Box, Typography, useTheme } from "@mui/material"
-import {DataGrid} from '@mui/x-data-grid'
-import {tokens} from '../../tema'
-import { mockDataTeam } from "../../data/data.js"
-import Header from "../../components/Header"
+import { Box, Typography, useTheme } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
+import { tokens } from "../../tema";
+import { mockDataTeam } from "../../data/data.js";
+import Header from "../../components/Header";
+import axios from "axios";
+import { useState, useEffect } from "react";
 
 const Carros = () => {
-  const tema = useTheme()
-  const colores = tokens(tema.palette.mode)
+  const tema = useTheme();
+  const colores = tokens(tema.palette.mode);
 
   const columnas = [
     {
-        field: "id",
-        headerName: "ID",
+      field: "id",
+      headerName: "ID",
+    },
+    {
+      field: "Marca",
+      headerName: "Marca",
+      flex: 1,
+      cellClassName: "name-column--cell",
+    },
+    {
+      field: "Modelo",
+      headerName: "Modelo",
+      type: "number",
+      headerAlign: "left",
+      align: "left",
+    },
+    {
+      field: "Linea",
+      headerName: "Linea",
+      flex: 1,
+      cellClassName: "name-column--cell",
+    },
+    {
+      field: "Edicion",
+      headerName: "Edicion",
+      flex: 1,
+    },
+  ];
 
-    },
-    {
-        field: "marca",
-        headerName: "Marca",
-        flex: 1,
-        cellClassName: "name-column--cell"
-    },
-    {
-        field: "modelo",
-        headerName: "Modelo",
-        type: "number",
-        headerAlign: "left",
-        align: "left",
-    },
-    {
-        field: "linea",
-        headerName: "Linea",
-        flex: 1,
-        cellClassName: "name-column--cell"
-    },
-    {
-        field: "edicion",
-        headerName: "Edicion",
-        flex: 1,
-    }
-  ]
+  const [carros, setCarros] = useState([]);
+
+  const datos = async () => {
+    const info = await axios.get("http://localhost:5000/carros");
+    console.log(info.data);
+    setCarros(info.data);
+  };
+
+  useEffect(() => {
+    datos();
+  }, []);
 
   return (
-    <Box m="20px" >
-        <Header titulo="CARROS" subtitulo="Pagina de carros" />
-        <Box m="40px 0 0 0" height="75vh" sx={{
+    <Box m="20px">
+      <Header titulo="CARROS" subtitulo="Pagina de carros" />
+      <Box
+        m="40px 0 0 0"
+        height="75vh"
+        sx={{
           "& .MuiDataGrid-root": {
             border: "none",
           },
@@ -72,14 +88,13 @@ const Carros = () => {
           },
           "& .MuiDataGrid-columnHeaderTitleContainer": {
             marginRight: "none",
-          }
-        }} >
-            <DataGrid rows={mockDataTeam} columns={columnas} />
-        </Box>
+          },
+        }}
+      >
+        <DataGrid rows={carros} columns={columnas} />
+      </Box>
     </Box>
-  )
-}
+  );
+};
 
-export default Carros
-
-
+export default Carros;
