@@ -1,4 +1,4 @@
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Typography, useTheme, TextField, Button, Modal } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../tema";
 import Header from "../../components/Header";
@@ -9,20 +9,19 @@ import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
-import { Link } from "react-router-dom";
 
 const Usuarios = () => {
   const tema = useTheme();
   const colores = tokens(tema.palette.mode);
-
+  
   const handleEditar = ({id}) => {
     window.location.href = `/editarUsuario/${id}`
   }
 
   const handleEliminar = async ({id}) => {
     setUsuariosConRoles(prevState => prevState.filter(usuario => usuario.id !== id));
-    await axios.delete(`http://localhost:5000/usuarios/${id}`)
+    setFilteredUsuarios(prevState => prevState.filter(usuario => usuario.id !== id));
+    await axios.delete(`http://localhost:5000/usuarios/${id}`);
   }
 
   const columnas = [
@@ -100,11 +99,63 @@ const Usuarios = () => {
 
   const [usuarios, setUsuarios] = useState([]);
   const [usuariosConRoles, setUsuariosConRoles] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [filteredUsuarios, setFilteredUsuarios] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [nuevoUsuario, setNuevoUsuario] = useState({
+    username: "",
+    password: "",
+    id_rol: ""
+  });
 
   const datos = async () => {
     const info = await axios.get("http://localhost:5000/usuarios");
     setUsuarios(info.data);
   };
+
+  useEffect(() => {
+    setFilteredUsuarios(
+      usuariosConRoles.filter((usuario) =>
+        Object.values(usuario)
+          .join(" ")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
+      )
+    );
+  }, [searchTerm, usuariosConRoles]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNuevoUsuario({ ...nuevoUsuario, [name]: value });
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    const usuarioConRolConvertido = {
+      ...nuevoUsuario,
+      id_rol: parseInt(nuevoUsuario.id_rol, 10),
+    };
+    try {
+        await axios.post("http://localhost:5000/usuarios", usuarioConRolConvertido);
+      datos();
+      setNuevoUsuario({
+        username: "",
+        password: "",
+        id_rol: 0,
+      }); 
+      setOpen(false); 
+      setEditing(false); 
+    } catch (error) {
+      console.error("Error al agregar carro:", error);
+    }
+  };
+
+  
 
   const obtenerRolesParaUsuarios = async (usuarios) => {
     const usuariosConRoles = await Promise.all(
@@ -123,6 +174,7 @@ const Usuarios = () => {
       })
     );
     setUsuariosConRoles(usuariosConRoles);
+    setFilteredUsuarios(usuariosConRoles);
   };
 
   useEffect(() => {
@@ -138,6 +190,18 @@ const Usuarios = () => {
   return (
     <Box m="20px">
       <Header titulo="USUARIOS" subtitulo="Pagina de usuarios" />
+      <Box display="flex" justifyContent="space-between" mb={2}>
+        <TextField
+          label="Buscar Usuario"
+          variant="outlined"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          sx={{ width: '300px' }}
+        />
+        <Button variant="contained" color="secondary" onClick={() => setOpen(true)}>
+          Agregar Usuario
+        </Button>
+      </Box>
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -173,8 +237,68 @@ const Usuarios = () => {
           },
         }}
       >
-        <DataGrid rows={usuariosConRoles} columns={columnas} />
+        <DataGrid rows={filteredUsuarios} columns={columnas} />
       </Box>
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+      >
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+          }}
+        >
+          <Typography id="modal-title" variant="h6" component="h2" gutterBottom>
+            {"Agregar Nuevo Usuario"}
+          </Typography>
+          <Box component="form" onSubmit={handleSubmit}>
+            <TextField
+              required
+              fullWidth
+              id="Usuario"
+              name="username"
+              label="Usuario"
+              value={nuevoUsuario.username}
+              onChange={handleInputChange}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              required
+              fullWidth
+              id="Contraseña"
+              name="password"
+              label="Contraseña"
+              value={nuevoUsuario.password}
+              onChange={handleInputChange}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              required
+              fullWidth
+              id="Rol"
+              name="id_rol"
+              label="Rol"
+              value={nuevoUsuario.id_rol}
+              onChange={handleInputChange}
+              sx={{ mb: 2 }}
+            />
+            <Button type="submit" variant="contained" color="primary">
+              {"Agregar Usuario"}
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
     </Box>
   );
 };

@@ -32,6 +32,7 @@ const EditarUsuarios = () => {
         password: valores.contraseña,
         id_rol: valores.rol
     })
+    window.location.href = "/usuarios";
   };
 
   const initialValues = {

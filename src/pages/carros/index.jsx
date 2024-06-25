@@ -4,8 +4,8 @@ import { tokens } from "../../tema";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import Header from "../../components/Header";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
 const Carros = () => {
   const tema = useTheme();
@@ -47,16 +47,16 @@ const Carros = () => {
       renderCell: (params) => (
         <>
           <IconButton
-            color="primary"
+            color="secondary"
             onClick={() => handleEditClick(params.row)}
           >
-            <EditIcon />
+            <EditOutlinedIcon />
           </IconButton>
           <IconButton
             color="secondary"
             onClick={() => handleDeleteClick(params.row.id)}
           >
-            <DeleteIcon />
+            <DeleteOutlineOutlinedIcon />
           </IconButton>
         </>
       ),
@@ -153,7 +153,7 @@ const Carros = () => {
           onChange={handleSearchChange}
           sx={{ width: '300px' }}
         />
-        <Button variant="contained" color="primary" onClick={() => setOpen(true)}>
+        <Button variant="contained" color="secondary" onClick={() => setOpen(true)}>
           Agregar Carro
         </Button>
       </Box>
