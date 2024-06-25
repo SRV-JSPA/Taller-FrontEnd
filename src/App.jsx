@@ -9,6 +9,7 @@ import Usuarios from './pages/usuarios'
 import CrearUsuarios from './pages/crearusuarios'
 import EditarUsuarios from './pages/editarusuarios'
 import Inventario from "./pages/inventario";
+import Calendar from "./pages/calendar";
 
 function App() {
   const [tema, colorMode] = useMode();
@@ -27,6 +28,7 @@ function App() {
             <Route path="/usuarios" element={<Usuarios/>} />
             <Route path="/crearUsuario" element={<CrearUsuarios/>} />
             <Route path="/editarUsuario/:id" element={<EditarUsuarios/>} />
+            <Route path="/calendario" element={<Calendar/>} />
           </Routes>
           </main>
         </div>
