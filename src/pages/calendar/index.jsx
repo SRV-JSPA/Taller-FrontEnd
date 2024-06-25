@@ -3,8 +3,9 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import listplugin from "@fullcalendar/list";
+import listPlugin from "@fullcalendar/list";
 import { formatDate } from "@fullcalendar/core";
+import esLocale from '@fullcalendar/core/locales/es'; 
 import {
   Box,
   List,
@@ -17,61 +18,63 @@ import Header from "../../components/Header";
 import { tokens } from "../../tema";
 
 const Calendar = () => {
-  const tema = useTheme();
-  const colores = tokens(tema.palette.mode);
-  const [eventosActuales, setEventosActuales] = useState([]);
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+  const [currentEvents, setCurrentEvents] = useState([]);
 
-  const handleDateClick = (seleccionado) => {
-    const titulo = prompt("Porfavor ingresa un titulo nuevo para el evento");
-    const calendarioApi = seleccionado.view.calendar;
-    calendarioApi.unselect();
+  const handleDateClick = (selected) => {
+    const title = prompt("Por favor ingresa un titulo para el nuevo evento");
+    const calendarApi = selected.view.calendar;
+    calendarApi.unselect();
 
-    if (titulo) {
-      calendarioApi.addEvent({
-        id: `${seleccionado.dateStr}-${titulo}`,
-        titulo,
-        start: seleccionado.startStr,
-        end: seleccionado.endStr,
-        allDay: seleccionado.allDay,
+    if (title) {
+      calendarApi.addEvent({
+        id: `${selected.dateStr}-${title}`,
+        title,
+        start: selected.startStr,
+        end: selected.endStr,
+        allDay: selected.allDay,
       });
     }
   };
-  const handleEventClick = (seleccionado) => {
+
+  const handleEventClick = (selected) => {
     if (
       window.confirm(
-        `Estas seguro de eliminar el evento '${seleccionado.event.title}'`
+        `¿Estás seguro de eliminar el evento: '${selected.event.title}'?`
       )
     ) {
-      seleccionado.event.remove();
+      selected.event.remove();
     }
   };
 
   return (
     <Box m="20px">
-      <Header titulo="CALENDARIO" subtitulo="Calendario de eventos" />
+      <Header title="CALENDARIO" subtitle="Calendario de eventos" />
+
       <Box display="flex" justifyContent="space-between">
         <Box
           flex="1 1 20%"
-          backgroundColor={colores.primario[400]}
+          backgroundColor={colors.primario[400]}
           p="15px"
           borderRadius="4px"
         >
           <Typography variant="h5">Eventos</Typography>
           <List>
-            {eventosActuales.map((evento) => {
+            {currentEvents.map((event) => (
               <ListItem
-                key={evento.id}
+                key={event.id}
                 sx={{
-                  backgroundColor: colores.verdeDecor[500],
+                  backgroundColor: colors.verdeDecor[500],
                   margin: "10px 0",
                   borderRadius: "2px",
                 }}
               >
                 <ListItemText
-                  primary={evento.title}
+                  primary={event.title}
                   secondary={
                     <Typography>
-                      {formatDate(evento.start, {
+                      {formatDate(event.start, {
                         year: "numeric",
                         month: "short",
                         day: "numeric",
@@ -79,8 +82,8 @@ const Calendar = () => {
                     </Typography>
                   }
                 />
-              </ListItem>;
-            })}
+              </ListItem>
+            ))}
           </List>
         </Box>
 
@@ -91,12 +94,12 @@ const Calendar = () => {
               dayGridPlugin,
               timeGridPlugin,
               interactionPlugin,
-              listplugin,
+              listPlugin,
             ]}
             headerToolbar={{
-                left: "prev, next today",
-                center: "title",
-                right: "dayGridMonth, timeGridWeek, timeGridDay, listMonth"
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth",
             }}
             initialView="dayGridMonth"
             editable={true}
@@ -105,10 +108,21 @@ const Calendar = () => {
             dayMaxEvents={true}
             select={handleDateClick}
             eventClick={handleEventClick}
-            eventsSet={(eventos) => setEventosActuales(eventos)}
+            eventsSet={(events) => setCurrentEvents(events)}
             initialEvents={[
-
+              {
+                id: "12315",
+                title: "Evento de todo el día",
+                date: "2022-09-14",
+              },
+              {
+                id: "5123",
+                title: "Evento con tiempo",
+                date: "2022-09-28",
+              },
             ]}
+            locales={[esLocale]} 
+            locale="es"
           />
         </Box>
       </Box>
